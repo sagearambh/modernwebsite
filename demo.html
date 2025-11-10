@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Video Pagination</title>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
+  <body class="bg-gray-50 p-4">
     <div
       id="videos"
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
@@ -18,6 +19,7 @@
       >
         Previous
       </button>
+      <span id="pageInfo" class="font-medium"></span>
       <button
         id="next"
         class="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
@@ -25,56 +27,65 @@
         Next
       </button>
     </div>
+
     <script>
-      const folderId = "1AurXae88vTAA5xwvixQSkYK91gKN0hAB";
-      const apiKey = "AIzaSyBVx-rCsF7pvvcQQqZIa5qGCS4V0mYTK6E";
-      const maxResults = 10; // 10 videos per page
-      let nextPageToken = null;
-      let prevPageToken = null;
+      const videosPerPage = 9; // how many videos per page
+      let currentPage = 1;
+      let totalPages = 1;
+      let allVideos = [];
 
-      function fetchVideos(pageToken = "") {
-        const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType contains 'video'&key=${apiKey}&pageSize=${maxResults}&pageToken=${pageToken}`;
+      function renderPage(page) {
+        const container = document.getElementById("videos");
+        container.innerHTML = "";
 
-        fetch(url)
+        const start = (page - 1) * videosPerPage;
+        const end = start + videosPerPage;
+        const pageVideos = allVideos.slice(start, end);
+
+        pageVideos.forEach((file) => {
+          const iframe = document.createElement("iframe");
+          iframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
+          iframe.className = "w-full aspect-video rounded";
+          iframe.allow = "autoplay";
+          iframe.allowFullscreen = true;
+          container.appendChild(iframe);
+        });
+
+        // Update buttons and info
+        document.getElementById("prev").disabled = page === 1;
+        document.getElementById("next").disabled = page === totalPages;
+        document.getElementById(
+          "pageInfo"
+        ).textContent = `Page ${page} of ${totalPages}`;
+      }
+
+      function fetchVideos() {
+        fetch("data.json")
           .then((res) => res.json())
           .then((data) => {
-            const container = document.getElementById("videos");
-            container.innerHTML = "";
-
-            data.files.forEach((file) => {
-              const iframe = document.createElement("iframe");
-              iframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
-              iframe.className = "w-full aspect-video rounded";
-              iframe.allow = "autoplay";
-              iframe.allowFullscreen = true;
-              container.appendChild(iframe);
-            });
-
-            // Handle pagination tokens
-            nextPageToken = data.nextPageToken || null;
-            prevPageToken = pageToken || null;
-
-            // Enable/disable buttons
-            document.getElementById("next").disabled = !nextPageToken;
-            document.getElementById("prev").disabled = !prevPageToken;
+            allVideos = data;
+            totalPages = Math.ceil(allVideos.length / videosPerPage);
+            renderPage(currentPage);
           })
           .catch((err) => console.error(err));
       }
 
       // Initial load
-      // fetchVideos();
+      fetchVideos();
 
       // Button listeners
       document.getElementById("next").addEventListener("click", () => {
-        if (nextPageToken) fetchVideos(nextPageToken);
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderPage(currentPage);
+        }
       });
 
       document.getElementById("prev").addEventListener("click", () => {
-        // Simplified previous handling — Drive API doesn’t return prev tokens,
-        // so you’d need to store tokens in an array for full navigation.
-        alert(
-          "Google Drive API doesn’t support going back directly. You can track pages manually."
-        );
+        if (currentPage > 1) {
+          currentPage--;
+          renderPage(currentPage);
+        }
       });
     </script>
   </body>
