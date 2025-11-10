@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div
+      id="videos"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+    ></div>
+
+    <div class="flex justify-center items-center mt-6 gap-4">
+      <button
+        id="prev"
+        class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+      >
+        Previous
+      </button>
+      <button
+        id="next"
+        class="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+      >
+        Next
+      </button>
+    </div>
+    <script>
+      const folderId = "1AurXae88vTAA5xwvixQSkYK91gKN0hAB";
+      const apiKey = "AIzaSyBVx-rCsF7pvvcQQqZIa5qGCS4V0mYTK6E";
+      const maxResults = 10; // 10 videos per page
+      let nextPageToken = null;
+      let prevPageToken = null;
+
+      function fetchVideos(pageToken = "") {
+        const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType contains 'video'&key=${apiKey}&pageSize=${maxResults}&pageToken=${pageToken}`;
+
+        fetch(url)
+          .then((res) => res.json())
+          .then((data) => {
+            const container = document.getElementById("videos");
+            container.innerHTML = "";
+
+            data.files.forEach((file) => {
+              const iframe = document.createElement("iframe");
+              iframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
+              iframe.className = "w-full aspect-video rounded";
+              iframe.allow = "autoplay";
+              iframe.allowFullscreen = true;
+              container.appendChild(iframe);
+            });
+
+            // Handle pagination tokens
+            nextPageToken = data.nextPageToken || null;
+            prevPageToken = pageToken || null;
+
+            // Enable/disable buttons
+            document.getElementById("next").disabled = !nextPageToken;
+            document.getElementById("prev").disabled = !prevPageToken;
+          })
+          .catch((err) => console.error(err));
+      }
+
+      // Initial load
+      // fetchVideos();
+
+      // Button listeners
+      document.getElementById("next").addEventListener("click", () => {
+        if (nextPageToken) fetchVideos(nextPageToken);
+      });
+
+      document.getElementById("prev").addEventListener("click", () => {
+        // Simplified previous handling — Drive API doesn’t return prev tokens,
+        // so you’d need to store tokens in an array for full navigation.
+        alert(
+          "Google Drive API doesn’t support going back directly. You can track pages manually."
+        );
+      });
+    </script>
+  </body>
+</html>
