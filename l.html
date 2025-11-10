@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic Video Gallery</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="dns-prefetch" href="https://video7.xhcdn.com">
+  </head>
+  <body>
+    
+    <a href="./page2.html" class="next-page"><button>Next Page</button></a>
+
+    <div class="gallery" id="gallery"></div>
+
+    <a href="./page2.html" class="next-page"><button>Next Page</button></a>
+
+    <script>
+      const urls = [
+        "https://video7.xhcdn.com/key=q5FOCzka3r7ZioRSnOKDDw,end=1750881600,limit=3/data=212.8.243.133-dvp/speed=0/021/439/758/720p.h264.mp4",
+        "https://video7.xhcdn.com/key=Wft08O6udFmYviBFAZ9NxA,end=1750878000,limit=3/data=212.8.243.133-dvp/speed=0/006/088/754/1080p.h264.mp4"
+      ];
+
+      const gallery = document.getElementById("gallery");
+
+      urls.forEach((url, index) => {
+        // Create container div
+        const cnt = document.createElement("div");
+        cnt.className = "cnt";
+
+        // Create link element
+        const link = document.createElement("a");
+        link.href = url;
+        link.textContent = `${index + 1} number`;
+
+        // Create video element
+        const video = document.createElement("video");
+        video.controls = true;
+        video.height = 200;
+        video.src = url;
+
+        // Append link and video to container
+        cnt.appendChild(link);
+        cnt.appendChild(video);
+
+        // Append container to gallery
+        gallery.appendChild(cnt);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic Video Gallery</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a href="./page4.html" class="next-page"><button>Prev Page</button></a>
+
+    <div class="gallery" id="gallery"></div>
+
+    <a href="./page4.html" class="next-page"><button>Prev Page</button></a>
+
+    <script>
+      const urls = [
+        "https://prog-public-ht.project1content.com/b0e/1a5/819/146/4bc/aa0/8cd/778/9c0/704/d4/mediabook/mediabook_720p.mp4",
+        "https://prog-public-ht.project1content.com/ded/d2d/0e4/9b8/4c7/7b3/7d1/ba8/26f/b04/de/video/trailer_2160p.mp4",
+        "https://prog-public-ht.project1content.com/de9/79b/3ba/3c1/40e/c8f/591/404/9b7/02e/8a/video/b03eed9c9fd2508ca28eb8683aa5c5ada87beba5.mp4",
+        "https://prog-public-ht.project1content.com/896/98f/fd3/331/411/c97/ceb/b1d/a68/f00/2b/video/75b9bed8d79cd4f05dd33b8b1061bbaae7ac5dcb.mp4",
+        "https://prog-public-ht.project1content.com/899/762/fa8/eeb/46d/6be/274/214/a4e/299/21/mediabook/mediabook_720p.mp4",
+        "https://prog-public-ht.project1content.com/27e/b1b/9b1/5c4/4f9/fb8/d8b/335/954/b92/19/video/trailer_2160p.mp4",
+        "https://prog-public-ht.project1content.com/497/c5d/418/032/444/d87/6ed/224/ee3/bfe/2c/video/748239efebef5eb1fff6d7c8522f29105a9694d1.mp4",
+        "https://prog-public-ht.project1content.com/631/c7e/1da/4ba/416/eae/60f/713/508/a1d/fe/video/trailer_2160p.mp4",
+        "https://prog-public-ht.project1content.com/94f/ea4/b29/4ed/4fc/78c/6e7/b60/373/d8d/03/video/trailer_2160p.mp4",
+      ];
+
+      const gallery = document.getElementById("gallery");
+
+      urls.forEach((url, index) => {
+        // Create container div
+        const cnt = document.createElement("div");
+        cnt.className = "cnt";
+
+        // Create link element
+        const link = document.createElement("a");
+        link.href = url;
+        link.textContent = `${index + 1} number`;
+
+        // Create video element
+        const video = document.createElement("video");
+        video.controls = true;
+        video.height = 200;
+        video.src = url;
+
+        // Append link and video to container
+        cnt.appendChild(link);
+        cnt.appendChild(video);
+
+        // Append container to gallery
+        gallery.appendChild(cnt);
+      });
+    </script>
+  </body>
+</html>
