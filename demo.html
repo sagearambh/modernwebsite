@@ -5,14 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Video Pagination</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      .thumb-wrapper {
+        position: relative;
+        width: 100%;
+      }
+
+      .thumb-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+        z-index: 10;
+      }
+
+      .thumb-image:hover {
+        opacity: 0;
+      }
+    </style>
   </head>
   <body class="bg-gray-50 p-4">
-    <div
-      id="videos"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-    ></div>
-
-    <div class="flex justify-center items-center mt-6 gap-4">
+    <div class="flex justify-center items-center my-6 gap-4">
       <button
         id="prev"
         class="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
@@ -27,9 +45,13 @@
         Next
       </button>
     </div>
+    <div
+      id="videos"
+      class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-4"
+    ></div>
 
     <script>
-      const videosPerPage = 9; // how many videos per page
+      const videosPerPage = 10;
       let currentPage = 1;
       let totalPages = 1;
       let allVideos = [];
@@ -43,15 +65,37 @@
         const pageVideos = allVideos.slice(start, end);
 
         pageVideos.forEach((file) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "flex flex-col";
+
+          const videoHolder = document.createElement("div");
+          videoHolder.className =
+            "thumb-wrapper aspect-video rounded overflow-hidden";
+
           const iframe = document.createElement("iframe");
           iframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
-          iframe.className = "w-full aspect-video rounded";
+          iframe.className = "w-full h-full rounded";
           iframe.allow = "autoplay";
           iframe.allowFullscreen = true;
-          container.appendChild(iframe);
+
+          const thumbnail = document.createElement("img");
+          thumbnail.src = file.thumbnail;
+          thumbnail.className = "thumb-image rounded";
+
+          videoHolder.appendChild(iframe);
+          videoHolder.appendChild(thumbnail);
+
+          const title = document.createElement("p");
+          title.textContent = file.name || "Untitled Video";
+          title.className =
+            "mt-2 text-center text-sm font-medium text-gray-700";
+
+          wrapper.appendChild(videoHolder);
+          wrapper.appendChild(title);
+
+          container.appendChild(wrapper);
         });
 
-        // Update buttons and info
         document.getElementById("prev").disabled = page === 1;
         document.getElementById("next").disabled = page === totalPages;
         document.getElementById(
@@ -70,10 +114,8 @@
           .catch((err) => console.error(err));
       }
 
-      // Initial load
       fetchVideos();
 
-      // Button listeners
       document.getElementById("next").addEventListener("click", () => {
         if (currentPage < totalPages) {
           currentPage++;
