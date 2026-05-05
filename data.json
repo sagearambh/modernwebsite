@@ -43,13 +43,6 @@
   },
   {
     "kind": "drive#file",
-    "id": "16yVqxTHWYtV27WxjduFwPBLzXldUOC9x",
-    "name": "69 Flexible p-7.mp4",
-    "mimeType": "video/mp4",
-    "thumbnail": "./thumbnails/p-7.jpg"
-  },
-  {
-    "kind": "drive#file",
     "id": "1m22t2_G0qHE7dDjJ2VARUNx5RBKFhI3c",
     "name": "Primal Control p-8.mp4",
     "mimeType": "video/mp4",
